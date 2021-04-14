@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use App\Models\BlogCategory;
 use App\Http\Controllers\Blog;
-use App\Http\Controllers\Blog\Admin\CategoryController;
+use App\Http\Controllers\Blog\Admin;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,14 +32,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Blog', 'prefix' => 'blog'], f
 
 //Админка блога
 $groupData = [
-    'namespace' => 'App\Http\Controllers\Blog\Admin',
+    //'namespace' => 'App\Http\Controllers\Blog\Admin',
     'prefix' => 'admin/blog',
 ];
 
 Route::group($groupData, function () {
     // BlogCategory
     $methods = ['index', 'edit', 'update', 'create', 'store',];
-    Route::resource('categories', 'CategoryController')
-    ->only($methods)
-    ->names('blog.admin.categories');
+    Route::resource('categories', App\Http\Controllers\Blog\Admin\CategoryController::class)
+        ->only($methods)
+        ->names('blog.admin.categories');
 });
