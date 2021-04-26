@@ -42,4 +42,12 @@ Route::group($groupData, function () {
     Route::resource('categories', App\Http\Controllers\Blog\Admin\CategoryController::class)
         ->only($methods)
         ->names('blog.admin.categories');
+
+    // BlogPost
+    Route::resource('posts', App\Http\Controllers\Blog\Admin\PostController::class)
+        ->except(['show'])
+        ->names('blog.admin.posts');
 });
+
+
+
