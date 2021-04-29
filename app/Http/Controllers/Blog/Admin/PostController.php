@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Blog\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use Illuminate\Http\Request;
+use App\Http\Requests\BlogPostUpdateRequest;
 
 use App\Repositories\BlogPostRepository;
 use App\Repositories\BlogCategoryRepository;
+use Carbon\Carbon;
 
 class PostController extends BaseController
 {
@@ -96,13 +98,40 @@ class PostController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  BlogPostUpdateRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogPostUpdateRequest $request, $id)
     {
-        dd(__METHOD__, $request->all(), $id);
+        $item = $this->blogPostRepository->getEdit($id);
+
+        if (empty($item)) {
+            return back()
+                ->withErrors(['msg' => "Запис ID=[{$id}] не знайдено"])
+                ->withInput();
+        }
+
+        $data = $request->all();
+
+        if (empty($data['slug'])) {
+            $data['slug'] = \Str::slug($data['title']);
+        }
+        if (empty($item->published_at) && $data['is_published']) {
+            $data['published_at'] = Carbon::now();
+        }
+
+        $result = $item->update($data);
+
+        if ($result) {
+            return redirect()
+                ->route('blog.admin.posts.edit', $item->id)
+                ->with(['success' => 'Успішно збережено']);
+        } else {
+            return back()
+                ->withErrors(['msg' => 'Помилка збереження'])
+                ->withInput();
+        }
     }
 
     /**

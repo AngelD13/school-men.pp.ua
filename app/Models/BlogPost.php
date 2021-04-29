@@ -49,6 +49,17 @@ class BlogPost extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $fillable = [
+        'title',
+        'slug',
+        'category_id',
+        'except',
+        'content_raw',
+        'is_published',
+        'published_at',
+        'user_id',
+    ];
+
     /**
      * Категории статьи
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
